@@ -90,6 +90,12 @@
       updateUpgradeButtons();
     });
 
+  linePrestigeButton.addEventListener('click', () => {
+      // Implement the Line Prestige action here
+      // For example, you can reset certain values or provide additional rewards
+      alert("Congratulations! You've triggered Line Prestige!");
+    });
+	
     squarePrestigeButton.addEventListener('click', () => {
       const diceLine = calculateDieNumber(points, 1);
 	  if ((calculateDieNumber(points, highestReached) === 6 && highestReached >= 3) || (highestReached > 3 && highestReached < 6)) {
