@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dice Roller</title>
+</head>
+<body>
+  <h1>Dice Roller</h1>
+  <p>Points: <span id="points">0</span></p>
+  <p>Highest Dice Reached: <span id="highestDice"></span></p>
+  <button id="rollButton">Roll Dice</button>
+
+  <script>
+    const pointsElement = document.getElementById('points');
+    const highestDiceElement = document.getElementById('highestDice');
+    const rollButton = document.getElementById('rollButton');
+    let points = 0;
+    let highestReached = 0;
+
+    function calculateDieNumber(points, n) {
+      return (Math.floor(points / Math.pow(6, n)) % 6) + 1;
+    }
+
+    rollButton.addEventListener('click', () => {
+      const rollValue = Math.floor(Math.random() * 6) + 1;
+      points += rollValue;
+      pointsElement.textContent = points;
+
+      for (let n = 0; n <= 10; n++) { // Checking up to n = 10
+        const dieValue = calculateDieNumber(points, n);
+        if (dieValue >= 2 && n > highestReached) {
+          highestReached = n;
+        }
+      }
+
+      highestDiceElement.textContent = `Highest Dice Reached: (Die ${highestReached + 1}) With A Value Of ${calculateDieNumber(points, highestReached)} `;
+    });
+  </script>
+</body>
+</html>
