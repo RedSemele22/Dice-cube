@@ -1,39 +1,115 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dice Roller</title>
+  <title>Dice Roller Upgrades</title>
 </head>
 <body>
   <h1>Dice Roller</h1>
   <p>Points: <span id="points">0</span></p>
   <p>Highest Dice Reached: <span id="highestDice"></span></p>
   <button id="rollButton">Roll Dice</button>
-
+  <button id="linePrestigeButton" disabled>Line Prestige</button>
+  <button id="squarePrestigeButton" disabled>Square Prestige</button>
+  <div id="upgrades">
+    <!-- Upgrade buttons will be added here -->
+  </div>
+  <div id="endMessage" style="display: none;">
+    <p>You've reached the end of this prototype</p>
+  </div>
   <script>
     const pointsElement = document.getElementById('points');
     const highestDiceElement = document.getElementById('highestDice');
     const rollButton = document.getElementById('rollButton');
+    const linePrestigeButton = document.getElementById('linePrestigeButton');
+    const squarePrestigeButton = document.getElementById('squarePrestigeButton');
+    const upgradesContainer = document.getElementById('upgrades');
+    const endMessage = document.getElementById('endMessage');
+
     let points = 0;
     let highestReached = 0;
+    let rollValue = 1; // Initial roll value
+    let upgrades = [
+      { name: 'Double Roll Value', cost: 10, action: () => rollValue *= 2 },
+      // Add more upgrades here
+    ];
 
     function calculateDieNumber(points, n) {
       return (Math.floor(points / Math.pow(6, n)) % 6) + 1;
     }
 
+    function updateUpgradeButtons() {
+      upgradesContainer.innerHTML = '';
+      upgrades.forEach((upgrade, index) => {
+        const button = document.createElement('button');
+        button.textContent = `${upgrade.name} - ${upgrade.cost} points`;
+        button.addEventListener('click', () => buyUpgrade(index));
+        upgradesContainer.appendChild(button);
+      });
+    }
+
+    function buyUpgrade(index) {
+      const upgrade = upgrades[index];
+      if (points >= upgrade.cost) {
+        points -= upgrade.cost;
+        upgrade.cost = Math.round(upgrade.cost * 5.5);
+        pointsElement.textContent = points;
+        upgrade.action();
+        updateUpgradeButtons();
+      }
+    }
+
     rollButton.addEventListener('click', () => {
-      const rollValue = Math.floor(Math.random() * 6) + 1;
-      points += rollValue;
+      const rolledValue = Math.floor(Math.random() * 6) + 1;
+      points += rolledValue * rollValue;
       pointsElement.textContent = points;
 
-      for (let n = 0; n <= 10; n++) { // Checking up to n = 10
+      for (let n = highestReached + 1; ; n++) {
         const dieValue = calculateDieNumber(points, n);
-        if (dieValue >= 2 && n > highestReached) {
+        if (dieValue >= 2) {
           highestReached = n;
+        } else {
+          break;
         }
       }
 
-      highestDiceElement.textContent = `Highest Dice Reached: (Die ${highestReached + 1}) With A Value Of ${calculateDieNumber(points, highestReached)} `;
+      highestDiceElement.textContent = `Highest Dice Reached: (Die ${highestReached + 1}) With A Value Of ${calculateDieNumber(points, highestReached)}`;
+      
+      if (highestReached >= 7 && calculateDieNumber(points, 7) === 6) {
+        endMessage.style.display = 'block';
+      } else {
+        endMessage.style.display = 'none';
+      }
+
+      if ((calculateDieNumber(points, highestReached) === 6 && highestReached >= 1) || (highestReached > 1 && highestReached < 6)) {
+        linePrestigeButton.disabled = false;
+      } else {
+        linePrestigeButton.disabled = true;
+      }
+
+      updateSquarePrestigeButton(); // Update square prestige button after each roll
+      updateUpgradeButtons();
     });
+
+    squarePrestigeButton.addEventListener('click', () => {
+      const diceLine = calculateDieNumber(points, 1);
+	  if ((calculateDieNumber(points, highestReached) === 6 && highestReached >= 3) || (highestReached > 3 && highestReached < 6)) {
+     
+        // Implement the Square Prestige action here
+        alert("Congratulations! You've triggered Square Prestige!");
+      }
+    });
+
+    function updateSquarePrestigeButton() {
+      const diceLine = calculateDieNumber(points, 1);
+      	  if ((calculateDieNumber(points, highestReached) === 6 && highestReached >= 3) || (highestReached > 3 && highestReached < 6)) {
+        squarePrestigeButton.disabled = false;
+      } else {
+        squarePrestigeButton.disabled = true;
+      }
+    }
+
+    // Initial upgrade buttons setup
+    updateUpgradeButtons();
   </script>
 </body>
 </html>
