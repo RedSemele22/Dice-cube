@@ -8,17 +8,19 @@
   <p>Points: <span id="points">0</span></p>
   <p>Highest Dice Reached: <span id="highestDice"></span></p>
   <button id="rollButton">Roll Dice</button>
-
   <div id="upgrades">
     <!-- Upgrade buttons will be added here -->
   </div>
-
+  <div id="endMessage" style="display: none;">
+    <p>You've reached the end of this prototype</p>
+  </div>
   <script>
     const pointsElement = document.getElementById('points');
     const highestDiceElement = document.getElementById('highestDice');
     const rollButton = document.getElementById('rollButton');
     const upgradesContainer = document.getElementById('upgrades');
-    
+    const endMessage = document.getElementById('endMessage');
+
     let points = 0;
     let highestReached = 0;
     let rollValue = 1; // Initial roll value
@@ -67,6 +69,12 @@
       }
 
       highestDiceElement.textContent = `Highest Dice Reached: (Die ${highestReached + 1}) With A Value Of ${calculateDieNumber(points, highestReached)}`;
+      
+      if (highestReached >= 7 && calculateDieNumber(points, 7) === 6) {
+        endMessage.style.display = 'block'; //Shows the player that they have completed the prototype once they turned the 8th dice of the cube to a 6
+      } else {
+        endMessage.style.display = 'none';
+      }
 
       updateUpgradeButtons(); // Update upgrade buttons after each roll
     });
